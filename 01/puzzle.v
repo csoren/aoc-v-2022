@@ -17,14 +17,37 @@ fn array_to_int[T](a []T) []int {
 	return a.map(it.int())
 }
 
-fn solve(filename string) ! {
+
+fn bags(filename string) ![]int {
 	lines := os.read_lines(filename)!
 	string_bags := array_split(lines, '')
 	int_bags := string_bags.map(array_to_int(it))
 	bags := int_bags.map(arrays.sum(it)!)
-	result := arrays.max(bags)!
 
-	println('${filename} = ${result}')
+	return bags
+}
+
+
+fn solve_part1(filename string) !int {
+	result := arrays.max(bags(filename)!)!
+
+	return result
+}
+
+
+fn solve_part2(filename string) !int {
+	mut sorted_bags := bags(filename)!
+	sorted_bags.sort(a > b)
+	sorted_bags.trim(3)
+	result := arrays.sum(sorted_bags)!
+
+	return result
+}
+
+
+fn solve(filename string) ! {
+	println('${filename} part 1 = ${solve_part1(filename)}')
+	println('${filename} part 2 = ${solve_part2(filename)}')
 }
 
 
