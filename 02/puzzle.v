@@ -28,14 +28,50 @@ fn as_score(round &Round)  int {
 }
 
 
-fn solve(filename string) ! {
+fn read_rounds(filename string) ![]&Round {
 	lines := os.read_lines(filename)!
-	rounds := lines.map(as_round(it))
+	result := lines.map(as_round(it))
+	return result
+}
+
+
+fn solve_part1(filename string) !int {
+	rounds := read_rounds(filename)!
 	scores := rounds.map(as_score(it))
 	score := arrays.sum(scores)!
 
-	println("${filename} score = ${score}")
+	return score
 }
+
+
+fn select_move(round Round) Round {
+	move := match round.me {
+		3 { if round.elf == 3 { 1 } else { round.elf + 1 } }
+		2 { round.elf }
+		1 { if round.elf == 1 { 3 } else { round.elf - 1 } }
+		else { panic('This shouldn\'t happen') }
+	}
+	return Round { 
+		...round
+		me: move
+	}
+}
+
+
+fn solve_part2(filename string) !int {
+	input := read_rounds(filename)!
+	scores := input.map(as_score(select_move(it)))
+	score := arrays.sum(scores)!
+
+	return score
+}
+
+
+fn solve(filename string) ! {
+	println("${filename} part 1 = ${solve_part1(filename)!}")
+	println("${filename} part 2 = ${solve_part2(filename)!}")
+}
+
 
 fn main() {
 	solve('02/test.txt')!
